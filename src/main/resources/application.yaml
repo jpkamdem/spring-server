@@ -1,0 +1,26 @@
+# https://docs.spring.io/spring-boot/appendix/application-properties/index.html#appendix.application-properties.server
+
+spring:
+  profiles:
+    active: konnnro
+
+  application:
+    name: server
+
+  datasource:
+    url: jdbc:postgresql://127.0.0.1/spring-server_db
+    username: kaiser
+    password: goatkaiser
+
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+
+app:
+  secret: NTlkY2E0ZGEtOGFkNi00Zjk1LWE2NzYtYWM4MDAxYWNkN2YxCg==
+  expiration: 86400000
+
+server:
+  port: 7700

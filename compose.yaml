@@ -1,0 +1,52 @@
+name: spring-server
+
+services:
+  db:
+    image: docker.io/library/postgres:18.0-alpine
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: spring-server_db
+      POSTGRES_USER: kaiser
+      POSTGRES_PASSWORD: goatkaiser
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "foo"]
+      interval: 10s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+
+  db-manager:
+    image: docker.io/dpage/pgadmin4:9.8.0
+    ports:
+      - "4444:80"
+    networks:
+      - app-network
+    volumes:
+      - db-manager_data:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: m.kaiser@proton.me
+      PGADMIN_DEFAULT_PASSWORD: kaisergoat
+    healthcheck:
+      test: ["CMD", "wget", "-O", "-", "http://localhost:80/misc/ping"]
+      interval: 10s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    depends_on:
+      db:
+        condition: service_healthy
+        required: true
+        restart: true
+
+volumes:
+  db_data:
+  db-manager_data:
+networks:
+  app-network:
+    driver: bridge
