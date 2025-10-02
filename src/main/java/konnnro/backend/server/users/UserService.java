@@ -3,6 +3,7 @@ package konnnro.backend.server.users;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -11,20 +12,35 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
   private final UserRepository repository;
+  private final PasswordEncoder passwordEncoder;
 
   public List<User> index() {
     return repository.findAll();
-  }
-
-  public User show(UUID id) {
-    return repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
   }
 
   public User showEmail(String email) {
     return repository.findByEmail(email);
   }
 
-  public User store(User user) {
+  public User show(UUID id) {
+    return repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+  }
+
+  public User store(User newUser) throws Exception {
+    if (showEmail(newUser.getEmail()) != null) {
+      throw new Exception(
+          "Un compte utilise déjà cette adresse mail : " + newUser.getEmail());
+    }
+
+    User user = new User();
+    user.setFirstname(newUser.getFirstname());
+    user.setLastname(newUser.getLastname());
+    user.setEmail(newUser.getEmail());
+    user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+    user.setAge(newUser.getAge());
+    user.setPhoneNumber(newUser.getPhoneNumber());
+    user.setRole(newUser.getRole());
+
     return repository.save(user);
   }
 
@@ -34,7 +50,7 @@ public class UserService {
           foundUser.setFirstname(newUser.getFirstname());
           foundUser.setLastname(newUser.getLastname());
           foundUser.setEmail(newUser.getEmail());
-          foundUser.setPassword(newUser.getPassword());
+          foundUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
           foundUser.setAge(newUser.getAge());
           foundUser.setPhoneNumber(newUser.getPhoneNumber());
           foundUser.setRole(newUser.getRole());

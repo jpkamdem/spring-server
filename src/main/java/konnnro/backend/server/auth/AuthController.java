@@ -27,8 +27,8 @@ public class AuthController {
   private final UserService userService;
 
   @PostMapping(path = "/register")
-  ResponseEntity<?> register(@RequestBody @Valid User user, HttpServletResponse response) {
-    Map<String, String> body = new HashMap<>();
+  ResponseEntity<?> register(@RequestBody @Valid User user, HttpServletResponse response) throws Exception {
+    Map<String, Object> body = new HashMap<>();
     body.clear();
     User foundUser = userService.showEmail(user.getEmail());
     if (foundUser != null) {
@@ -46,12 +46,14 @@ public class AuthController {
     response.addCookie(cookie);
 
     body.put("message", "Utilisateur " + user.getFirstname() + " " + user.getLastname() + " créé(e) et authentifié(e)");
+    body.put("user", user);
 
     return new ResponseEntity<>(body, HttpStatus.OK);
   }
 
   @PostMapping(path = "/login")
-  ResponseEntity<?> login(@RequestBody @Valid LoginCredentials credentials, HttpServletResponse response) {
+  ResponseEntity<?> login(@RequestBody @Valid LoginCredentials credentials, HttpServletResponse response)
+      throws Exception {
     Map<String, Object> body = new HashMap<>();
     body.clear();
     User foundUser = userService.showEmail(credentials.getEmail());
@@ -59,12 +61,8 @@ public class AuthController {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    // if (foundUser == null) {
-    // body.put("message", "Cette adresse mail n'est pas utilisée");
-    // return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    // }
+    authService.authenticate(credentials.getPassword(), credentials.getEmail(), foundUser);
 
-    // // password check
     String token = authService.generateToken(foundUser.getId());
     Cookie cookie = new Cookie("token", token);
     cookie.setSecure(true);
@@ -75,7 +73,7 @@ public class AuthController {
 
     body.put("message",
         "Utilisateur " + foundUser.getFirstname() + " " + foundUser.getLastname() + " connecté(e)");
-    body.put("tokenInfo", authService.extract(token));
+    body.put("user", foundUser);
 
     return new ResponseEntity<>(body, HttpStatus.OK);
   }

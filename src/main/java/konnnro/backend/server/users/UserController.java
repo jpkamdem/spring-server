@@ -12,7 +12,6 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,21 +44,6 @@ public class UserController {
       body.put("message", "Utilisateur introuvable");
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
-  }
-
-  @PostMapping(path = "/")
-  ResponseEntity<?> create(@RequestBody @Valid User user) {
-    Map<String, String> body = new HashMap<>();
-    body.clear();
-    User foundUser = service.showEmail(user.getEmail());
-    if (foundUser != null) {
-      body.put("message", "L'adresse mail " + user.getEmail() + " est déjà utilisé");
-      return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
-
-    service.store(user);
-    body.put("message", "Utilisateur " + user.getFirstname() + " " + user.getLastname() + " créé(e)");
-    return new ResponseEntity<>(body, HttpStatus.CREATED);
   }
 
   @PutMapping(path = "/{id}")
