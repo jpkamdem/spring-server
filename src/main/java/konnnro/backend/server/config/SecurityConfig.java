@@ -20,11 +20,10 @@ public class SecurityConfig {
         .httpBasic(basic -> basic.disable())
         .formLogin(form -> form.disable())
         .authorizeHttpRequests(requests -> requests
-            .requestMatchers(HttpMethod.GET, "/api/users").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-            .requestMatchers(HttpMethod.PUT, "/api/users").permitAll()
-            .requestMatchers(HttpMethod.DELETE, "/api/users").permitAll()
-            .anyRequest().permitAll());
+            .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
+            .anyRequest().authenticated());
 
     return http.build();
   }

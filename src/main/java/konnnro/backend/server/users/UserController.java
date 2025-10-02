@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -52,8 +51,8 @@ public class UserController {
   ResponseEntity<?> create(@RequestBody @Valid User user) {
     Map<String, String> body = new HashMap<>();
     body.clear();
-    Optional<User> foundUser = service.showEmail(user.getEmail());
-    if (foundUser.isPresent()) {
+    User foundUser = service.showEmail(user.getEmail());
+    if (foundUser != null) {
       body.put("message", "L'adresse mail " + user.getEmail() + " est déjà utilisé");
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -67,8 +66,8 @@ public class UserController {
   ResponseEntity<?> edit(@RequestBody @Valid User user, @PathVariable UUID id) {
     Map<String, String> body = new HashMap<>();
     body.clear();
-    Optional<User> foundUser = service.showEmail(user.getEmail());
-    if (foundUser.isPresent()) {
+    User foundUser = service.showEmail(user.getEmail());
+    if (foundUser != null) {
       body.put("message", "L'adresse mail " + user.getEmail() + " est déjà utilisé");
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }

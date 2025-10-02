@@ -1,7 +1,6 @@
 package konnnro.backend.server.users;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class UserService {
     return repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
   }
 
-  public Optional<User> showEmail(String email) {
+  public User showEmail(String email) {
     return repository.findByEmail(email);
   }
 

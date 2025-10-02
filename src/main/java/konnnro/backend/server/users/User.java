@@ -4,7 +4,9 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,10 +57,11 @@ public class User {
   @Column(name = "age", nullable = false, length = 3)
   private Integer age;
 
-  @Enumerated(EnumType.STRING)
   @Getter(AccessLevel.PUBLIC)
   @Setter(AccessLevel.PUBLIC)
-  @Column(name = "role", nullable = false)
+  @Enumerated(EnumType.STRING)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(name = "role", nullable = false, columnDefinition = "role")
   private Role role;
 
   @Getter(AccessLevel.PUBLIC)
