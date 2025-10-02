@@ -1,4 +1,4 @@
-package konnnro.backend.users;
+package konnnro.backend.server.users;
 
 import java.sql.Timestamp;
 import java.util.UUID;
