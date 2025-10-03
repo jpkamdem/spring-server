@@ -14,54 +14,87 @@ public class UserService {
   private final UserRepository repository;
   private final PasswordEncoder passwordEncoder;
 
-  public List<User> index() {
-    return repository.findAll();
+  public List<User> index() throws Exception {
+    try {
+      List<User> users = repository.findAll();
+      return users;
+    } catch (Exception ex) {
+      throw new Exception(
+          "Échec de la récupération des utilisateurs et utilisatrices");
+    }
   }
 
-  public User showEmail(String email) {
-    return repository.findByEmail(email);
+  public User showEmail(String email) throws Exception {
+    try {
+      User user = repository.findByEmail(email);
+      return user;
+    } catch (Exception ex) {
+      throw new Exception(
+          "L'adresse mail " + email + " n'existe pas dans la base de données");
+    }
   }
 
-  public User show(UUID id) {
-    return repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+  public User show(UUID id) throws Exception {
+    try {
+      User user = repository.findById(id).orElseThrow();
+      return user;
+    } catch (Exception ex) {
+      throw new Exception(
+          "Échec de la récupération de l'utilisateur.ice ID");
+    }
   }
 
   public User store(User newUser) throws Exception {
-    if (showEmail(newUser.getEmail()) != null) {
+    try {
+      if (showEmail(newUser.getEmail()) != null) {
+        throw new Exception(
+            "Un compte utilise déjà cette adresse mail : " + newUser.getEmail());
+      }
+
+      User user = new User();
+      user.setFirstname(newUser.getFirstname());
+      user.setLastname(newUser.getLastname());
+      user.setEmail(newUser.getEmail());
+      user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+      user.setAge(newUser.getAge());
+      user.setPhoneNumber(newUser.getPhoneNumber());
+      user.setRole(newUser.getRole());
+
+      return repository.save(user);
+    } catch (Exception ex) {
       throw new Exception(
-          "Un compte utilise déjà cette adresse mail : " + newUser.getEmail());
+          "Échec de la création de l'utilisateur.ice");
     }
-
-    User user = new User();
-    user.setFirstname(newUser.getFirstname());
-    user.setLastname(newUser.getLastname());
-    user.setEmail(newUser.getEmail());
-    user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-    user.setAge(newUser.getAge());
-    user.setPhoneNumber(newUser.getPhoneNumber());
-    user.setRole(newUser.getRole());
-
-    return repository.save(user);
   }
 
-  public User update(User newUser, UUID id) {
-    return repository.findById(id)
-        .map(foundUser -> {
-          foundUser.setFirstname(newUser.getFirstname());
-          foundUser.setLastname(newUser.getLastname());
-          foundUser.setEmail(newUser.getEmail());
-          foundUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-          foundUser.setAge(newUser.getAge());
-          foundUser.setPhoneNumber(newUser.getPhoneNumber());
-          foundUser.setRole(newUser.getRole());
-          foundUser.setUpdatedAt(newUser.getCreatedAt());
-          return repository.save(foundUser);
-        })
-        .orElseThrow(() -> new UserNotFoundException(id));
+  public User update(User newUser, UUID id) throws Exception {
+    try {
+      return repository.findById(id)
+          .map(foundUser -> {
+            foundUser.setFirstname(newUser.getFirstname());
+            foundUser.setLastname(newUser.getLastname());
+            foundUser.setEmail(newUser.getEmail());
+            foundUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+            foundUser.setAge(newUser.getAge());
+            foundUser.setPhoneNumber(newUser.getPhoneNumber());
+            foundUser.setRole(newUser.getRole());
+            foundUser.setUpdatedAt(newUser.getCreatedAt());
+            return repository.save(foundUser);
+          })
+          .orElseThrow();
+    } catch (Exception ex) {
+      throw new Exception(
+          "Échec de la modification de l'utilisateur.ice");
+    }
   }
 
-  public void destroy(UUID id) {
-    repository.deleteById(id);
+  public void destroy(UUID id) throws Exception {
+    try {
+      repository.deleteById(id);
+    } catch (Exception ex) {
+      throw new Exception(
+          "Échec de la suppression de l'utilisateur.ice");
+    }
   }
 
 }

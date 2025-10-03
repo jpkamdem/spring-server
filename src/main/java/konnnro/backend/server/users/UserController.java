@@ -4,9 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -24,57 +22,30 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping(path = "/api/users/")
 @RequiredArgsConstructor
 public class UserController {
-  private final UserService service;
+  private final UserService userService;
 
   @GetMapping(path = "/")
-  ResponseEntity<?> all() {
-    List<User> users = service.index();
+  ResponseEntity<?> all() throws Exception {
+    List<User> users = userService.index();
     return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
   @GetMapping(path = "/{id}")
-  ResponseEntity<?> one(@PathVariable UUID id) {
-    Map<String, String> body = new HashMap<>();
-    try {
-      body.clear();
-      User foundUser = service.show(id);
-      return new ResponseEntity<>(foundUser, HttpStatus.OK);
-    } catch (Exception e) {
-      body.clear();
-      body.put("message", "Utilisateur introuvable");
-      return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
+  ResponseEntity<?> one(@PathVariable UUID id) throws Exception {
+    User foundUser = userService.show(id);
+    return new ResponseEntity<>(foundUser, HttpStatus.OK);
   }
 
   @PutMapping(path = "/{id}")
-  ResponseEntity<?> edit(@RequestBody @Valid User user, @PathVariable UUID id) {
-    Map<String, String> body = new HashMap<>();
-    body.clear();
-    User foundUser = service.showEmail(user.getEmail());
-    if (foundUser != null) {
-      body.put("message", "L'adresse mail " + user.getEmail() + " est déjà utilisé");
-      return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
-
-    service.update(user, id);
-    body.put("message", "Utilisateur " + user.getFirstname() + " " + user.getLastname() + " modifié(e)");
-    return new ResponseEntity<>(body, HttpStatus.OK);
+  ResponseEntity<?> edit(@RequestBody @Valid User user, @PathVariable UUID id) throws Exception {
+    userService.update(user, id);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @DeleteMapping(path = "/{id}")
-  ResponseEntity<?> delete(@PathVariable UUID id) {
-    Map<String, String> body = new HashMap<>();
-    body.clear();
-    try {
-      User foundUser = service.show(id);
-      service.destroy(id);
-      body.put("message", "Utilisateur " + foundUser.getFirstname() + " " + foundUser.getLastname() + " supprimé(e)");
-      return new ResponseEntity<>(body, HttpStatus.OK);
-    } catch (Exception e) {
-      body.clear();
-      body.put("message", "Utilisateur introuvable");
-      return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
+  ResponseEntity<?> delete(@PathVariable UUID id) throws Exception {
+    userService.destroy(id);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
 }

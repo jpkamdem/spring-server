@@ -1,6 +1,5 @@
 package konnnro.backend.server.auth;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import konnnro.backend.server.users.LoginCredentials;
@@ -29,25 +28,9 @@ public class AuthController {
   @PostMapping(path = "/register")
   ResponseEntity<?> register(@RequestBody @Valid User user, HttpServletResponse response) throws Exception {
     Map<String, Object> body = new HashMap<>();
-    body.clear();
-    User foundUser = userService.showEmail(user.getEmail());
-    if (foundUser != null) {
-      body.put("message", "Cette adresse mail est déjà utilisée");
-      return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
-
-    userService.store(user);
-    String token = authService.generateToken(user.getId());
-    Cookie cookie = new Cookie("token", token);
-    cookie.setSecure(true);
-    cookie.setHttpOnly(true);
-    cookie.setPath("/");
-    cookie.setMaxAge(authService.getExpiration());
-    response.addCookie(cookie);
-
-    body.put("message", "Utilisateur " + user.getFirstname() + " " + user.getLastname() + " créé(e) et authentifié(e)");
-    body.put("user", user);
-
+    User storedUser = userService.store(user);
+    authService.addJwtCookie(storedUser, response);
+    body.put("user", storedUser);
     return new ResponseEntity<>(body, HttpStatus.OK);
   }
 
@@ -55,40 +38,18 @@ public class AuthController {
   ResponseEntity<?> login(@RequestBody @Valid LoginCredentials credentials, HttpServletResponse response)
       throws Exception {
     Map<String, Object> body = new HashMap<>();
-    body.clear();
     User foundUser = userService.showEmail(credentials.getEmail());
-    if (foundUser == null) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
     authService.authenticate(credentials.getPassword(), credentials.getEmail(), foundUser);
-
-    String token = authService.generateToken(foundUser.getId());
-    Cookie cookie = new Cookie("token", token);
-    cookie.setSecure(true);
-    cookie.setHttpOnly(true);
-    cookie.setPath("/");
-    cookie.setMaxAge(authService.getExpiration() / 1000);
-    response.addCookie(cookie);
-
-    body.put("message",
-        "Utilisateur " + foundUser.getFirstname() + " " + foundUser.getLastname() + " connecté(e)");
+    authService.addJwtCookie(foundUser, response);
     body.put("user", foundUser);
-
     return new ResponseEntity<>(body, HttpStatus.OK);
   }
 
   @PostMapping(path = "/logout")
-  ResponseEntity<?> logout(HttpServletResponse response) {
+  ResponseEntity<?> logout(HttpServletResponse response) throws Exception {
     Map<String, String> body = new HashMap<>();
-    Cookie cookie = new Cookie("token", null);
-    cookie.setPath("/");
-    cookie.setHttpOnly(true);
-    cookie.setSecure(true);
-    cookie.setMaxAge(0);
-    response.addCookie(cookie);
-
-    body.put("message", "Utilisateur déconnecté(e)");
+    authService.invalidateJwtCookie(response);
+    body.put("message", "Utilisateur.ice déconnecté.e");
     return new ResponseEntity<>(body, HttpStatus.OK);
   }
 

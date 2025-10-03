@@ -39,16 +39,15 @@ public class JWTService {
         .compact();
   }
 
-  public Object extractAllClaims(String token) {
+  public Object extractClaims(String token) throws JwtException {
     try {
       return Jwts.parser()
           .verifyWith(getSigningKey())
           .build()
           .parseSignedClaims(token)
           .getPayload();
-    } catch (JwtException e) {
-      // TODO: handle exception
-      return e.getLocalizedMessage();
+    } catch (JwtException ex) {
+      throw new JwtException(ex.getLocalizedMessage());
     }
   }
 
