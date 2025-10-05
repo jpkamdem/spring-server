@@ -8,8 +8,7 @@ create type role as enum ('superadmin', 'admin', 'user');
 
 create table if not exists users (
   id uuid unique not null default uuid_generate_v4(),
-  firstname varchar(55) not null,
-  lastname varchar(55) not null,
+  username varchar(55) unique not null,
   email varchar(255) unique not null,
   password varchar(255) not null,
   age integer not null,

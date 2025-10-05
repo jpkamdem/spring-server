@@ -1,7 +1,6 @@
 [
 	{
-		"firstname": "john",
-		"lastname": "doe",
+		"username": "johndoe",
 		"email": "johndoe@gmail.com",
 		"password": "Johndoe123***",
 		"age": 15,
@@ -9,8 +8,7 @@
 		"role": "user"
 	},
 	{
-		"firstname": "jane",
-		"lastname": "doe",
+		"username": "janedoe",
 		"email": "janedoe@gmail.com",
 		"password": "Janedoe123***",
 		"age": 18,
@@ -18,8 +16,7 @@
 		"role": "admin"
 	},
 	{
-		"firstname": "jennyfer",
-		"lastname": "doe",
+		"username": "jennyferdoe",
 		"email": "jennyferdoe@gmail.com",
 		"password": "Jennyferdoe123***",
 		"age": 21,

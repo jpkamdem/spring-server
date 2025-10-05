@@ -17,7 +17,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,59 +24,54 @@ import lombok.Setter;
 @Table(name = "users")
 public class User {
   @Id
-  @Getter(AccessLevel.PUBLIC)
+  @Getter
   @GeneratedValue
   @Column(name = "id", nullable = false, unique = true)
   private UUID id;
 
-  @Getter(AccessLevel.PUBLIC)
-  @Setter(AccessLevel.PUBLIC)
-  @Column(name = "firstname", nullable = false, length = 55)
-  private String firstname;
+  @Getter
+  @Setter
+  @Column(name = "username", nullable = false, length = 55, unique = true)
+  private String username;
 
-  @Getter(AccessLevel.PUBLIC)
-  @Setter(AccessLevel.PUBLIC)
-  @Column(name = "lastname", nullable = false, length = 55)
-  private String lastname;
-
-  @Getter(AccessLevel.PUBLIC)
-  @Setter(AccessLevel.PUBLIC)
+  @Getter
+  @Setter
   @Email(message = "Votre email est invaldie")
   @Column(name = "email", nullable = false, unique = true)
   private String email;
 
-  @Getter(AccessLevel.PUBLIC)
-  @Setter(AccessLevel.PUBLIC)
+  @Getter
+  @Setter
   @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$", message = "Votre mot de passe doit contenir au minimum : une lettre majuscule, une lettre minuscule, un nombre, un caractères spécial et faire 8 caractères")
   @Column(name = "password", nullable = false)
   private String password;
 
-  @Getter(AccessLevel.PUBLIC)
-  @Setter(AccessLevel.PUBLIC)
+  @Getter
+  @Setter
   @Column(name = "age", nullable = false, length = 3)
   private Integer age;
 
-  @Getter(AccessLevel.PUBLIC)
-  @Setter(AccessLevel.PUBLIC)
+  @Getter
+  @Setter
   @Enumerated(EnumType.STRING)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(name = "role", nullable = false, columnDefinition = "role")
   private Role role;
 
-  @Getter(AccessLevel.PUBLIC)
-  @Setter(AccessLevel.PUBLIC)
+  @Getter
+  @Setter
   @Pattern(regexp = "^0[(6|7)][0-9]{8}$", message = "Votre numéro de téléphone est invalide")
   @Column(name = "phone_number", nullable = false, unique = true, length = 10)
   private String phoneNumber;
 
   @CreationTimestamp
-  @Getter(AccessLevel.PUBLIC)
+  @Getter
   @Column(name = "created_at", nullable = false)
   private Timestamp createdAt;
 
   @UpdateTimestamp
-  @Getter(AccessLevel.PUBLIC)
-  @Setter(AccessLevel.PUBLIC)
+  @Getter
+  @Setter
   @Column(name = "updated_at", nullable = false)
   private Timestamp updatedAt;
 

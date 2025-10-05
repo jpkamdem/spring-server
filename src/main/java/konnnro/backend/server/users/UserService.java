@@ -52,8 +52,7 @@ public class UserService {
       }
 
       User user = new User();
-      user.setFirstname(newUser.getFirstname());
-      user.setLastname(newUser.getLastname());
+      user.setUsername(newUser.getUsername());
       user.setEmail(newUser.getEmail());
       user.setPassword(passwordEncoder.encode(newUser.getPassword()));
       user.setAge(newUser.getAge());
@@ -71,8 +70,7 @@ public class UserService {
     try {
       return repository.findById(id)
           .map(foundUser -> {
-            foundUser.setFirstname(newUser.getFirstname());
-            foundUser.setLastname(newUser.getLastname());
+            foundUser.setUsername(newUser.getUsername());
             foundUser.setEmail(newUser.getEmail());
             foundUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
             foundUser.setAge(newUser.getAge());

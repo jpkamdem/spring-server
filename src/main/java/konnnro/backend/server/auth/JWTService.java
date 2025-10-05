@@ -12,7 +12,6 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.AccessLevel;
 import lombok.Getter;
 
 @Service
@@ -22,7 +21,7 @@ public class JWTService {
   private String baseKey;
 
   @Value("${app.expiration}")
-  @Getter(AccessLevel.PUBLIC)
+  @Getter
   private Integer expirationDate;
 
   private SecretKey getSigningKey() {

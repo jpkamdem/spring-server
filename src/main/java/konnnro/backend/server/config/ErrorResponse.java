@@ -2,17 +2,16 @@ package konnnro.backend.server.config;
 
 import java.time.LocalDateTime;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 
 public class ErrorResponse {
-  @Getter(AccessLevel.PUBLIC)
+  @Getter
   private Integer status;
 
-  @Getter(AccessLevel.PUBLIC)
+  @Getter
   private String message;
 
-  @Getter(AccessLevel.PUBLIC)
+  @Getter
   private LocalDateTime timestamp;
 
   public ErrorResponse(Integer status, LocalDateTime timestamp, String message) {
