@@ -1,0 +1,29 @@
+[
+	{
+		"firstname": "john",
+		"lastname": "doe",
+		"email": "johndoe@gmail.com",
+		"password": "Johndoe123***",
+		"age": 15,
+		"phoneNumber": "0756314766",
+		"role": "user"
+	},
+	{
+		"firstname": "jane",
+		"lastname": "doe",
+		"email": "janedoe@gmail.com",
+		"password": "Janedoe123***",
+		"age": 18,
+		"phoneNumber": "0688888888",
+		"role": "admin"
+	},
+	{
+		"firstname": "jennyfer",
+		"lastname": "doe",
+		"email": "jennyferdoe@gmail.com",
+		"password": "Jennyferdoe123***",
+		"age": 21,
+		"phoneNumber": "0655555555",
+		"role": "superadmin"
+	}
+]

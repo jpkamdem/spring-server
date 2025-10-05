@@ -2,39 +2,54 @@ name: ${APP_NAME}
 
 services:
   db:
-    image: docker.io/library/postgres:18.0-alpine
+    image: postgres:18.0-alpine
+    restart: always
     ports:
-      - "5432:5432"
+      - name: db
+        host_ip: 127.0.0.1
+        published: 5432
+        target: 5432
     networks:
-      - app-network
+      - private
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
       DATABASE_URL: ${DATABASE_URL}
+    env_file:
+      - ./.env
+    secrets:
+      - source: db_password
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "foo"]
       interval: 10s
       timeout: 10s
       start_period: 30s
       retries: 3
-    shm_size: 128mb
 
   db-manager:
-    image: docker.io/dpage/pgadmin4:9.8.0
+    image: dpage/pgadmin4:9.8.0
+    restart: always
     ports:
-      - "4444:80"
+      - name: db-manager
+        host_ip: 127.0.0.1
+        published: 4444
+        target: 80
     networks:
-      - app-network
+      - private
     volumes:
       - db-manager_data:/var/lib/pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/db-manager_password
+    env_file:
+      - ./.env
+    secrets:
+      - source: db-manager_password
     healthcheck:
-      test: ["CMD", "wget", "-O", "-", "http://localhost:80/misc/ping"]
+      test: ["CMD", "wget", "-O", "-", "http://127.0.0.1:80/misc/ping"]
       interval: 10s
       timeout: 10s
       start_period: 30s
@@ -42,12 +57,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
-        required: true
         restart: true
 
 volumes:
   db_data:
   db-manager_data:
+
 networks:
-  app-network:
-    driver: bridge
+  private:
+
+secrets:
+  db_password:
+    file: ./db_password.txt
+  db-manager_password:
+    file: ./db-manager_password.txt
