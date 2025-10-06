@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .env
+db_password.txt
+db-manager_password.txt
 
 ### STS ###
 .apt_generated

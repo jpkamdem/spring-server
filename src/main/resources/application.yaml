@@ -9,8 +9,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://127.0.0.1/spring-server_db
-    username: kaiser
-    password: goatkaiser # openssl rand -base64 32
+    username: postgresql_user_1
+    password: l8mBGPvF4Nj0K3+uEd/mge6SBc72LEYuxrFP01Be3lA= # openssl rand -base64 32
 
   jpa:
     show-sql: true

@@ -12,4 +12,5 @@ public class LoginCredentials {
   private String identifier;
 
   private String password;
+
 }

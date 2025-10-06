@@ -1,5 +1,6 @@
 package konnnro.backend.server.auth;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -7,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import konnnro.backend.server.users.LoginCredentials;
 import konnnro.backend.server.users.User;
+import konnnro.backend.server.users.UserService;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -15,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
   private final JWTService jwtService;
   private final PasswordEncoder passwordEncoder;
+  private final UserService userService;
 
   public Integer getExpiration() {
     return jwtService.getExpirationDate();
@@ -28,11 +32,17 @@ public class AuthService {
     return jwtService.extractClaims(token);
   }
 
-  public void authenticate(String rawPassword, String identifier, User storedUser) throws Exception {
-    if (!passwordEncoder.matches(rawPassword, storedUser.getPassword())) {
+  public User authenticate(LoginCredentials credentials) throws Exception {
+    User foundByEmailUser = userService.showEmail(credentials.getIdentifier());
+    User foundByUsernameUser = userService.showUsername(credentials.getIdentifier());
+    User storedUser = Objects.requireNonNullElse(foundByEmailUser, foundByUsernameUser);
+
+    if (!passwordEncoder.matches(credentials.getPassword(), storedUser.getPassword())) {
       throw new Exception(
           "Le mot de passe ne correspond pas");
     }
+
+    return storedUser;
   }
 
   public void addJwtCookie(User user, HttpServletResponse response) {

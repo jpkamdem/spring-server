@@ -7,6 +7,8 @@ import org.springframework.web.context.request.WebRequest;
 import io.jsonwebtoken.JwtException;
 
 import java.time.LocalDateTime;
+import java.util.MissingResourceException;
+import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,5 +30,26 @@ public class GlobalExceptionHandler {
         ex.getLocalizedMessage());
 
     return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(NullPointerException.class)
+  public ResponseEntity<ErrorResponse> handleNullPointerException(NullPointerException ex, WebRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now(),
+        ex.getLocalizedMessage());
+    return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(MissingResourceException.class)
+  public ResponseEntity<ErrorResponse> handleMissingResourceException(MissingResourceException ex, WebRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now(),
+        ex.getLocalizedMessage());
+    return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(NoSuchElementException.class)
+  public ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException ex, WebRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now(),
+        ex.getLocalizedMessage());
+    return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
