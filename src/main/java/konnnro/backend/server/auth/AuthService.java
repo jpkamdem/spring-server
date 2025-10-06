@@ -28,12 +28,7 @@ public class AuthService {
     return jwtService.extractClaims(token);
   }
 
-  public void authenticate(String rawPassword, String rawEmail, User storedUser) throws Exception {
-    if (!rawEmail.equals(storedUser.getEmail())) {
-      throw new Exception(
-          "L'adresse mail ne correspond pas'");
-    }
-
+  public void authenticate(String rawPassword, String identifier, User storedUser) throws Exception {
     if (!passwordEncoder.matches(rawPassword, storedUser.getPassword())) {
       throw new Exception(
           "Le mot de passe ne correspond pas");

@@ -5,21 +5,21 @@ spring:
     active: konnnro
 
   application:
-    name: server
+    name: spring-server
 
   datasource:
     url: jdbc:postgresql://127.0.0.1/spring-server_db
     username: kaiser
-    password: goatkaiser
+    password: goatkaiser # openssl rand -base64 32
 
   jpa:
     show-sql: true
     open-in-view: false
-    # hibernate:
-    #   ddl-auto: validate
+    hibernate:
+      ddl-auto: validate
 
 app:
-  secret: 4B6rq3fiRbh2S/f+2FghrjPgHcgWwMfXgqgeAFTdhC8=
+  secret: 4B6rq3fiRbh2S/f+2FghrjPgHcgWwMfXgqgeAFTdhC8= # openssl rand -base64 32
   expiration: 86400000
 
 server:

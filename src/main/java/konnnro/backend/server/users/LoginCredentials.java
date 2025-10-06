@@ -9,7 +9,7 @@ import lombok.Setter;
 public class LoginCredentials {
 
   @Email(message = "Votre adresse mail est invalide")
-  private String email;
+  private String identifier;
 
   private String password;
 }

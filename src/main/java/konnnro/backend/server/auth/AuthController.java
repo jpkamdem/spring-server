@@ -38,10 +38,20 @@ public class AuthController {
   ResponseEntity<?> login(@RequestBody @Valid LoginCredentials credentials, HttpServletResponse response)
       throws Exception {
     Map<String, Object> body = new HashMap<>();
-    User foundUser = userService.showEmail(credentials.getEmail());
-    authService.authenticate(credentials.getPassword(), credentials.getEmail(), foundUser);
-    authService.addJwtCookie(foundUser, response);
-    body.put("user", foundUser);
+    User foundByEmailUser = userService.showEmail(credentials.getIdentifier());
+    User foundByUsernameUser = userService.showUsername(credentials.getIdentifier());
+    User user = new User();
+
+    if (foundByEmailUser == null) {
+      user = foundByUsernameUser;
+    }
+    if (foundByUsernameUser == null) {
+      user = foundByEmailUser;
+    }
+
+    authService.authenticate(credentials.getPassword(), credentials.getIdentifier(), user);
+    authService.addJwtCookie(user, response);
+    body.put("user", user);
     return new ResponseEntity<>(body, HttpStatus.OK);
   }
 

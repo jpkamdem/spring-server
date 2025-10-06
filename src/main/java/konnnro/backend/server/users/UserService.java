@@ -34,6 +34,17 @@ public class UserService {
     }
   }
 
+  public User showUsername(String username) throws Exception {
+    try {
+      User user = repository.findByUsername(username);
+      return user;
+    } catch (Exception ex) {
+      throw new Exception(
+        "Le nom d'utilisateur.ice " + username + " n'existe pas dans la base de donnée"
+      );
+    }
+  }
+
   public User show(UUID id) throws Exception {
     try {
       User user = repository.findById(id).orElseThrow();
@@ -62,7 +73,7 @@ public class UserService {
       return repository.save(user);
     } catch (Exception ex) {
       throw new Exception(
-          "Échec de la création de l'utilisateur.ice");
+          ex.getLocalizedMessage());
     }
   }
 
