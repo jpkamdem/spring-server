@@ -2,7 +2,10 @@ name: ${APP_NAME}
 
 services:
   db:
-    image: postgres:18.0-alpine
+    image: ${APP_NAME}/postgres:12.0
+    build:
+      context: ./
+      dockerfile: Containerfile.db
     restart: always
     ports:
       - name: db
@@ -59,6 +62,30 @@ services:
         condition: service_healthy
         restart: true
 
+  server:
+    image: ${APP_NAME}/spring:1.0
+    build:
+      context: ./
+      dockerfile: Containerfile
+    ports:
+      - name: server
+        host_ip: 127.0.0.1
+        published: 7700
+        target: 7700
+    networks:
+      - private
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:7700/health"]
+      interval: 10s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    depends_on:
+      db:
+        condition: service_healthy
+      db-manager:
+        condition: service_healthy
+
 volumes:
   db_data:
   db-manager_data:
@@ -68,6 +95,6 @@ networks:
 
 secrets:
   db_password:
-    file: ./db_password.txt
+    file: ./.db_password.txt
   db-manager_password:
-    file: ./db-manager_password.txt
+    file: ./.db-manager_password.txt

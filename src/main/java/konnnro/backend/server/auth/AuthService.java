@@ -36,6 +36,9 @@ public class AuthService {
     User foundByEmailUser = userService.showEmail(credentials.getIdentifier());
     User foundByUsernameUser = userService.showUsername(credentials.getIdentifier());
     User storedUser = Objects.requireNonNullElse(foundByEmailUser, foundByUsernameUser);
+    if (storedUser == null) {
+      throw new Exception("Utilisateur.ice introuvable");
+    }
 
     if (!passwordEncoder.matches(credentials.getPassword(), storedUser.getPassword())) {
       throw new Exception(

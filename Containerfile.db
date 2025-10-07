@@ -1,0 +1,3 @@
+FROM postgres:18.0-alpine
+
+ADD src/main/resources/migration.sql /docker-entrypoint-initdb.d/migration.sql

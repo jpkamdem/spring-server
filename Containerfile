@@ -1,11 +1,13 @@
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+FROM maven:amazoncorretto AS build
 WORKDIR /app
 COPY pom.xml ./
-RUN mvn install
+RUN mvn dependency:go-offline -B
 COPY src ./src
-RUN mvn package
+RUN mvn clean package -DskipTests
 
-FROM eclipse-temurin:17-jre
+FROM openjdk:26-jdk-slim-bookworm AS runtime
+RUN apt-get -y update; apt-get -y install curl
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-CMD ["java", "-jar", "app.jar"]
+COPY --from=build /app/target/server-0.0.1-SNAPSHOT.jar server-0.0.1-SNAPSHOT.jar
+EXPOSE 7700
+CMD ["java", "-jar", "server-0.0.1-SNAPSHOT.jar"]

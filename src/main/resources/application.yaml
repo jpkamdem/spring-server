@@ -5,16 +5,19 @@ spring:
     active: konnnro
 
   application:
-    name: spring-server
+    name: server
 
   datasource:
-    url: jdbc:postgresql://127.0.0.1/spring-server_db
+    # dev = 127.0.0.1, prod = service de la db
+    url: jdbc:postgresql://db:5432/myapp_db
+    # url: jdbc:postgresql://127.0.0.1:5432/myapp_db
     username: postgresql_user_1
     password: l8mBGPvF4Nj0K3+uEd/mge6SBc72LEYuxrFP01Be3lA= # openssl rand -base64 32
 
   jpa:
     show-sql: true
     open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
 
