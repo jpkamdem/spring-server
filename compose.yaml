@@ -2,7 +2,7 @@ name: ${APP_NAME}
 
 services:
   db:
-    image: ${APP_NAME}/postgres:12.0
+    image: ${APP_NAME}/postgres:1.0
     build:
       context: ./
       dockerfile: Containerfile.db
