@@ -75,10 +75,4 @@ public class User {
   @Column(name = "updated_at", nullable = false)
   private Timestamp updatedAt;
 
-  public enum Role {
-    superadmin,
-    admin,
-    user
-  }
-
 }

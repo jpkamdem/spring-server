@@ -6,17 +6,19 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class UserService {
-  private final UserRepository repository;
+  private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+
+  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
 
   public List<User> index() throws Exception {
     try {
-      List<User> users = repository.findAll();
+      List<User> users = userRepository.findAll();
       return users;
     } catch (Exception ex) {
       throw new Exception(
@@ -26,7 +28,7 @@ public class UserService {
 
   public User showEmail(String email) throws Exception {
     try {
-      User user = repository.findByEmail(email);
+      User user = userRepository.findByEmail(email);
       return user;
     } catch (Exception ex) {
       throw new Exception(
@@ -36,18 +38,17 @@ public class UserService {
 
   public User showUsername(String username) throws Exception {
     try {
-      User user = repository.findByUsername(username);
+      User user = userRepository.findByUsername(username);
       return user;
     } catch (Exception ex) {
       throw new Exception(
-        "Le nom d'utilisateur.ice " + username + " n'existe pas dans la base de donnée"
-      );
+          "Le nom d'utilisateur.ice " + username + " n'existe pas dans la base de donnée");
     }
   }
 
   public User show(UUID id) throws Exception {
     try {
-      User user = repository.findById(id).orElseThrow();
+      User user = userRepository.findById(id).orElseThrow();
       return user;
     } catch (Exception ex) {
       throw new Exception(
@@ -70,7 +71,7 @@ public class UserService {
       user.setPhoneNumber(newUser.getPhoneNumber());
       user.setRole(newUser.getRole());
 
-      return repository.save(user);
+      return userRepository.save(user);
     } catch (Exception ex) {
       throw new Exception(
           ex.getLocalizedMessage());
@@ -79,7 +80,7 @@ public class UserService {
 
   public User update(User newUser, UUID id) throws Exception {
     try {
-      return repository.findById(id)
+      return userRepository.findById(id)
           .map(foundUser -> {
             foundUser.setUsername(newUser.getUsername());
             foundUser.setEmail(newUser.getEmail());
@@ -88,7 +89,7 @@ public class UserService {
             foundUser.setPhoneNumber(newUser.getPhoneNumber());
             foundUser.setRole(newUser.getRole());
             foundUser.setUpdatedAt(newUser.getCreatedAt());
-            return repository.save(foundUser);
+            return userRepository.save(foundUser);
           })
           .orElseThrow();
     } catch (Exception ex) {
@@ -99,7 +100,7 @@ public class UserService {
 
   public void destroy(UUID id) throws Exception {
     try {
-      repository.deleteById(id);
+      userRepository.deleteById(id);
     } catch (Exception ex) {
       throw new Exception(
           "Échec de la suppression de l'utilisateur.ice");

@@ -3,6 +3,7 @@ package konnnro.backend.server.auth;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,14 +12,19 @@ import jakarta.servlet.http.HttpServletResponse;
 import konnnro.backend.server.users.LoginCredentials;
 import konnnro.backend.server.users.User;
 import konnnro.backend.server.users.UserService;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
   private final JWTService jwtService;
   private final PasswordEncoder passwordEncoder;
   private final UserService userService;
+
+  @Autowired
+  public AuthService(JWTService jwtService, PasswordEncoder passwordEncoder, UserService userService) {
+    this.jwtService = jwtService;
+    this.passwordEncoder = passwordEncoder;
+    this.userService = userService;
+  }
 
   public Integer getExpiration() {
     return jwtService.getExpirationDate();
