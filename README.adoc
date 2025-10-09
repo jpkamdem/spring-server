@@ -98,19 +98,19 @@ server:
   port: 7700 # par défaut 8080, ici http://127.0.0.1:7700
 ----
 
-===== Développement
+==== Développement
 
 * Veuillez décommenter les segments marqués `# dev` et laisser ceux marqués `# prod`
 * Selon la plateforme de conteneurisation utilisée, depuis la racine :
 
-*Docker*
+Docker
 
 [,sh]
 ----
 docker compose up -d db-manager
 ----
 
-*Podman*
+Podman
 
 [,sh]
 ----
@@ -134,19 +134,261 @@ mvn clean spring-boot:run
 
 Afin de vérifier que tout aille bien, veuillez utiliser Postman et effectuer la requête suivante : `GET http://127.0.0.1:7700/health`. Une valeur de retour 200 indique que tout fonctionne, vous pouvez maintenant tester les fonctionnalités de l'application
 
-===== Production
+==== Production
 
 * Veuillez décommenter les segments marqués `# prod` et laisser ceux marqués `# dev`
 * Selon la plateforme de conteneurisation utilisée, depuis la racine :
 
-*Docker*
+Docker
 
 [,sh]
 ----
 docker compose up -d
 ----
 
-*Podman*
+Podman
+
+[,sh]
+----
+podman-compose up -d
+----
+
+Afin d'avoir accès à la base de donnée, veuillez vous référer au début de la section précédente.
+
+Après une attente légèrement plus longue, veuillez effectuer le même test : `GET http://127.0.0.1:7700/health`. Une valeur de retour 200 indique que tout fonctionne, vous pouvez maintenant tester les fonctionnalités de l'application
+
+=== Endpoints
+
+*Authentification*
+
+===== `POST http://127.0.0.1/7700/api/auth/register`
+
+Cet endpoint attend une requête contenant un corps de la forme suivante :
+
+[,json]
+----
+{
+	"username": "johndoe",
+	"email": "johndoe@gmail.com", 
+	"password": "Johndoe123***",
+	"age": 15,
+	"phoneNumber": "0756314766",
+	"role": "user"
+}
+----
+* `username`, `email` et `phoneNumber` doivent être unique
+
+* `password` doit contenir au minimum : une lettre majuscule, une lettre minuscule, un nombre, un caractères spécial et faire 8 caractères
+
+* `email` doit être valide
+
+* `role` doit être soit `user`, `admin` ou `superadmin`
+
+===== `POST http://127.0.0.1/7700/api/auth/login`
+
+[,json]
+----
+{
+	"identifier": "johndoe",
+	"identifier": "johndoe@gmail.com", 
+	"password": "Johndoe123***"
+}
+----
+
+* `identifier` est indiqué 2 fois car il est possible de s'authentifier via `username` et `password` : choisissez
+
+===== `POST http://127.0.0.1/7700/api/auth/logout`
+
+* Un cookie contenant un Jwt est requis, pas besoin de corps
+
+*CRUD*
+
+⚠️ Ces routes nécessitent d'être authentifié.e, sinon erreur car l'accès aux données n'est pas autorisé à n'importe qui. Chacune de ces routes ne sont accessible qu'à l'utilisateur.ice propriétaire du compte en question, ou aux utilisateur.ices ayant les rôles `admin` ou `superadmin`
+
+===== `GET http://127.0.0.1/7700/api/users/`
+
+[,json]
+----
+[]
+----
+
+* 200 OK, retourne la liste des utilisateur.ices créé.es
+
+===== `GET http://127.0.0.1/7700/api/users/{id}`
+
+[,json]
+----
+{}
+----
+
+* 200 OK, retourne l'utilisateur.ice trouvé.e à partir de l'id
+
+===== `PUT http://127.0.0.1/7700/api/users/{id}`
+
+[,json]
+----
+{}
+----
+
+
+* 200 OK, retourne l'utilisateur.ice après modification
+
+===== `DELETE http://127.0.0.1/7700/api/users/{id}`
+
+[,json]
+----
+
+----
+
+* 200 OK, ne retourne rien= Spring Boot Server
+:doctype: book
+
+=== Présentation
+
+// Description (serveur auth stateless basique, stack)
+Spring Boot Server est ma première tentative concrète de création d'un serveur en utilisant Java Spring Boot, proposant :
+
+* CRUD
+* authentification (Stateless)
+* conteneurisation
+
+==== Stack
+
+* Java (21.06.6, 2025-01-21 LTS)
+* Spring Boot (3.5.6, 2025-09-18)
+* PostgreSQL (18)
+* PgAdmin4 (9.8.0)
+* Podman (4.9.3)
+* Postman (11.52.4, 2025-07-03)
+
+Bien que j'ai utilisé Podman lors de la conception, Docker est totalement utilisable. Utilisez la plateforme de conteneurisation qui vous plaît
+
+=== Comment démarrer le projet
+
+[,sh]
+----
+git clone https://github.com/jpkamdem/spring-server.git
+cd spring-server/
+----
+
+En raison de problématique de sécurité dans un projet réel, veuillez créer le fichier `.env` suivant :
+
+[,env]
+----
+<!>
+APP_NAME=app_name # <!>
+APP_SECRET=your_secret
+DB_HOST=db # nom du service de la db dans le compose.yaml
+DB_PORT=5432 # convention <!>
+POSTGRES_DB=${APP_NAME}_db # <!>
+POSTGRES_USER=postgresql_user_1 # <!>
+POSTGRES_PASSWORD=db_secret # <!>
+DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}
+
+PGADMIN_DEFAULT_EMAIL=dumbemail@gmail.com
+PGADMIN_DEFAULT_PASSWORD=pgadmin_secret
+
+SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${APP_NAME}_db
+SPRING_DATASOURCE_USER=${POSTGRES_USER}
+SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+
+# Les variables marqués d'un <!> seront réutilisées manuellement dans la section suivante
+----
+
+Dans le fichier `src/main/resources/application.yaml`, veuillez copier/coller cette configuration :
+
+[,yaml]
+----
+# https://docs.spring.io/spring-boot/appendix/application-properties/index.html#appendix.application-properties.server
+
+spring:
+  profiles:
+    active: groupId
+    # nom utilisé utilisé lors de la création du projet (nom du groupe du projet, de l'entreprise...), à modifier conjointement avec le groupId dans le pom.xl, le dossier src/main/java/konnnro
+
+  application:
+    name: server
+    # comme vous voulez, à modifier conjointement avec le dossier src/main/java/konnnro/backend/server. pour modifier backend, modifiez le même endroit dans le     pom.xml que renseigné plus haut
+
+  # dev à décommenter lors d'une utilisation en développement
+  # datasource:
+  #   url: jdbc:postgresql://127.0.0.1:5432/myapp_db # ici, écrire {db_port}/{app_name}_db, comme écrit dans postgres_db avec le nom "calculé"
+  #   username: postgresql_user_1 # postgres_user
+  #   password: db_secret # postgres_password
+
+  # prod à décommenter lors d'une utilisation en production, touche pas
+  # datasource:
+  #   url: ${SPRING_DATASOURCE_URL}
+  #   username: ${SPRING_DATASOURCE_USER}
+  #   password: ${SPRING_DATASOURCE_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+
+app:
+  # dev configuration à décommenter lors d'une utilisation en développement
+  # secret: your_secret # openssl rand -base64 32
+  
+  # prod configuration à décommenter lors d'une utilisation en production
+  # secret: ${APP_SECRET}
+  expiration: 86400000 # une journée
+
+server:
+  port: 7700 # par défaut 8080, ici http://127.0.0.1:7700
+----
+
+==== Développement
+
+* Veuillez décommenter les segments marqués `# dev` et laisser ceux marqués `# prod`
+* Selon la plateforme de conteneurisation utilisée, depuis la racine :
+
+Docker
+
+[,sh]
+----
+docker compose up -d db-manager
+----
+
+Podman
+
+[,sh]
+----
+podman-compose up -d db-manager
+----
+
+À partir de ces commandes, PgAdmin4 sera accessible via `http://127.0.0.1:4444`, les variables `PGADMIN_DEFAULT_EMAIL` et `PGADMIN_DEFAULT_PASSWORD` seront requis afin de se connecter.
+
+Depuis l'application, `Servers > Register > Server` :
+
+* Dans l'onglet `General`, veuillez inscrire le nom de votre choix dans `NAME` (d'habitude, on y écrit la version de PostgreSQL, donc Postgres 18, pg18...)
+* Dans l'onglet `Connection`, veuillez renseigner le `DB_HOST`dans `Host name/address`, le `POSTGRES_USER` dans `Username` et le `POSTGRES_PASSWORD` dans `Password` > `Save`
+
+Dans le menu déroulant affichant le nom de serveur que vous avez désigné, veuillez dérouler jusqu'à tomber sur la base de donnée ayant le nom spécifié, et voilà vous avez fini cette partie.
+
+[,sh]
+----
+mvn clean install
+mvn clean spring-boot:run
+----
+
+Afin de vérifier que tout aille bien, veuillez utiliser Postman et effectuer la requête suivante : `GET http://127.0.0.1:7700/health`. Une valeur de retour 200 indique que tout fonctionne, vous pouvez maintenant tester les fonctionnalités de l'application
+
+==== Production
+
+* Veuillez décommenter les segments marqués `# prod` et laisser ceux marqués `# dev`
+* Selon la plateforme de conteneurisation utilisée, depuis la racine :
+
+Docker
+
+[,sh]
+----
+docker compose up -d
+----
+
+Podman
 
 [,sh]
 ----
