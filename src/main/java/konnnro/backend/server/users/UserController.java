@@ -41,8 +41,8 @@ public class UserController {
 
   @PutMapping(path = "/{id}")
   ResponseEntity<?> edit(@RequestBody @Valid User user, @PathVariable UUID id) throws Exception {
-    userService.update(user, id);
-    return new ResponseEntity<>(HttpStatus.OK);
+    User updatedUser = userService.update(user, id);
+    return new ResponseEntity<>(updatedUser, HttpStatus.OK);
   }
 
   @DeleteMapping(path = "/{id}")

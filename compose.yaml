@@ -16,15 +16,8 @@ services:
       - private
     volumes:
       - db_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
-      DATABASE_URL: ${DATABASE_URL}
     env_file:
-      - ./.env
-    secrets:
-      - source: db_password
+      - .env
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
@@ -44,13 +37,8 @@ services:
       - private
     volumes:
       - db-manager_data:/var/lib/pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/db-manager_password
     env_file:
-      - ./.env
-    secrets:
-      - source: db-manager_password
+      - .env
     healthcheck:
       test: ["CMD", "wget", "-O", "-", "http://127.0.0.1:80/misc/ping"]
       interval: 10s
@@ -67,6 +55,7 @@ services:
     build:
       context: ./
       dockerfile: Containerfile-server
+    restart: always
     ports:
       - name: server
         host_ip: 127.0.0.1
@@ -74,6 +63,8 @@ services:
         target: 7700
     networks:
       - private
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:7700/health"]
       interval: 10s
@@ -92,9 +83,3 @@ volumes:
 
 networks:
   private:
-
-secrets:
-  db_password:
-    file: ./.db_password.txt
-  db-manager_password:
-    file: ./.db-manager_password.txt

@@ -7,12 +7,17 @@ spring:
   application:
     name: server
 
+  # dev
+  # datasource:
+  #   url: jdbc:postgresql://127.0.0.1:5432/myapp_db
+  #   username: postgresql_user_1
+  #   password: l8mBGPvF4Nj0K3+uEd/mge6SBc72LEYuxrFP01Be3lA= # openssl rand -base64 32
+
+  # prod
   datasource:
-    # dev = 127.0.0.1, prod = service de la db
-    # url: jdbc:postgresql://db:5432/myapp_db
-    url: jdbc:postgresql://127.0.0.1:5432/myapp_db
-    username: postgresql_user_1
-    password: l8mBGPvF4Nj0K3+uEd/mge6SBc72LEYuxrFP01Be3lA= # openssl rand -base64 32
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USER}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
   jpa:
     open-in-view: false
@@ -21,7 +26,10 @@ spring:
       ddl-auto: validate
 
 app:
-  secret: 4B6rq3fiRbh2S/f+2FghrjPgHcgWwMfXgqgeAFTdhC8= # openssl rand -base64 32
+  # dev
+  # secret: 4B6rq3fiRbh2S/f+2FghrjPgHcgWwMfXgqgeAFTdhC8= # openssl rand -base64 32
+  # prod
+  secret: ${APP_SECRET}
   expiration: 86400000
 
 server:
