@@ -5,7 +5,7 @@ services:
     image: ${APP_NAME}/postgres:1.0
     build:
       context: ./
-      dockerfile: Containerfile-db
+      dockerfile: Containerfile.db
     restart: always
     ports:
       - name: db
@@ -17,7 +17,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     env_file:
-      - .env
+      - .env.db
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
@@ -38,7 +38,7 @@ services:
     volumes:
       - db-manager_data:/var/lib/pgadmin
     env_file:
-      - .env
+      - .env.db-manager
     healthcheck:
       test: ["CMD", "wget", "-O", "-", "http://127.0.0.1:80/misc/ping"]
       interval: 10s
@@ -48,13 +48,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
-        restart: true
 
   server:
     image: ${APP_NAME}/spring:1.0
     build:
       context: ./
-      dockerfile: Containerfile-server
+      # dockerfile: Containerfile.prod
+      dockerfile: Containerfile.dev
+    volumes:
+      - .:/app
     restart: always
     ports:
       - name: server
@@ -64,7 +66,7 @@ services:
     networks:
       - private
     env_file:
-      - .env
+      - .env.server
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:7700/health"]
       interval: 10s

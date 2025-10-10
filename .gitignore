@@ -3,9 +3,8 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-.env
-.db_password.txt
-.db-manager_password.txt
+.env*
+*.env
 
 ### STS ###
 .apt_generated

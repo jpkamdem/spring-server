@@ -1,0 +1,7 @@
+FROM maven:amazoncorretto
+WORKDIR /app
+COPY pom.xml ./
+RUN mvn dependency:go-offline -B
+COPY src ./
+EXPOSE 7700
+CMD [ "mvn", "spring-boot:run" ]
