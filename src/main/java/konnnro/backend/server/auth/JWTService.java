@@ -67,10 +67,6 @@ public class JWTService {
         .orElse(new Cookie("token", null))
         .getValue();
 
-    if (cookieValue == null) {
-      throw new NoSuchElementException("Vous n'êtes pas connecté.e");
-    }
-
     return cookieValue;
   }
 

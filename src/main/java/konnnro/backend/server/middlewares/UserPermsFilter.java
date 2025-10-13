@@ -33,6 +33,10 @@ public class UserPermsFilter implements Filter {
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
     String cookieValue = jwtService.tokenValueFromHttp(request);
+    if (cookieValue == null) {
+      throw new IOException("Vous n'êtes pas connecté.e");
+    }
+
     Claims decodedToken = jwtService.extractClaims(cookieValue);
     UUID jti = UUID.fromString(decodedToken.getSubject());
     User user = userRepository.findById(jti).get();

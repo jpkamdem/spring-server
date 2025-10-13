@@ -1,12 +1,15 @@
 package konnnro.backend.server.users;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
-  public User findByEmail(String email);
+  public Optional<User> findByEmail(String email);
 
-  public User findByUsername(String username);
+  public Optional<User> findByUsername(String username);
+
+  public Optional<User> findByPhoneNumber(String phoneNumber);
 
 }
