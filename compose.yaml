@@ -2,7 +2,7 @@ name: ${APP_NAME}
 
 services:
   db:
-    image: ${APP_NAME}/postgres:1.0
+    image: ${APP_NAME}/postgres:latest
     build:
       context: ./
       dockerfile: Containerfile.db
@@ -13,7 +13,7 @@ services:
         published: 5432
         target: 5432
     networks:
-      - private
+      - app-network
     volumes:
       - db_data:/var/lib/postgresql/data
     env_file:
@@ -34,7 +34,7 @@ services:
         published: 4444
         target: 80
     networks:
-      - private
+      - app-network
     volumes:
       - db-manager_data:/var/lib/pgadmin
     env_file:
@@ -50,21 +50,21 @@ services:
         condition: service_healthy
 
   server:
-    image: ${APP_NAME}/spring:1.0
+    image: ${APP_NAME}/spring:latest
     build:
       context: ./
-      # dockerfile: Containerfile.prod
-      dockerfile: Containerfile.dev
-    volumes:
-      - .:/app
+      dockerfile: Containerfile.prod
+    #   dockerfile: Containerfile.dev
+    # volumes:
+    #   - .:/app
     restart: always
-    ports:
-      - name: server
-        host_ip: 127.0.0.1
-        published: 7700
-        target: 7700
+    # ports:
+    #   - name: server
+    #     host_ip: 127.0.0.1
+    #     published: 7700
+    #     target: 7700
     networks:
-      - private
+      - app-network
     env_file:
       - .env.server
     healthcheck:
@@ -73,10 +73,28 @@ services:
       timeout: 10s
       start_period: 30s
       retries: 3
+    deploy:
+      replicas: 3
     depends_on:
       db:
         condition: service_healthy
-      db-manager:
+      # db-manager:
+      #   condition: service_healthy
+
+  webserver:
+    image: ${APP_NAME}/nginx:latest
+    build:
+      context: ./
+      dockerfile: Containerfile.nginx
+    ports:
+      - host_ip: 127.0.0.1
+        published: 4000
+        target: 443
+        app_protocol: https
+    networks:
+      - app-network
+    depends_on:
+      server:
         condition: service_healthy
 
 volumes:
@@ -84,4 +102,4 @@ volumes:
   db-manager_data:
 
 networks:
-  private:
+  app-network:
