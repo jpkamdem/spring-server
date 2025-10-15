@@ -1,13 +1,11 @@
-package konnnro.backend.server.config;
+package org.myapp.backend.config;
 
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.context.annotation.Configuration;
+import org.myapp.backend.middlewares.UserPermsFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.web.SecurityFilterChain;
-
-import konnnro.backend.server.middlewares.UserPermsFilter;
-
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

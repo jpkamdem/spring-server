@@ -1,12 +1,12 @@
-package konnnro.backend.server.auth;
+package org.myapp.backend.auth;
 
 import java.util.UUID;
 
+import org.myapp.backend.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpServletResponse;
-import konnnro.backend.server.users.User;
 
 @Service
 public class AuthService {

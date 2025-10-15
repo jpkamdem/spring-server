@@ -1,4 +1,4 @@
-package konnnro.backend.server.auth;
+package org.myapp.backend.auth;
 
 import java.util.Arrays;
 import java.util.Date;

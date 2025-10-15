@@ -1,4 +1,4 @@
-package konnnro.backend.server;
+package org.myapp.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package konnnro.backend.server.users;
+package org.myapp.backend.users;
 
 import lombok.Getter;
 

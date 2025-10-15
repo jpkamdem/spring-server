@@ -1,8 +1,12 @@
-package konnnro.backend.server.middlewares;
+package org.myapp.backend.middlewares;
 
 import java.io.IOException;
 import java.util.UUID;
 
+import org.myapp.backend.auth.JWTService;
+import org.myapp.backend.users.Role;
+import org.myapp.backend.users.User;
+import org.myapp.backend.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +17,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import konnnro.backend.server.auth.JWTService;
-import konnnro.backend.server.users.Role;
-import konnnro.backend.server.users.User;
-import konnnro.backend.server.users.UserRepository;
 
 @Component
 public class UserPermsFilter implements Filter {

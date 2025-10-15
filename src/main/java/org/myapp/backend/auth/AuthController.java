@@ -1,15 +1,15 @@
-package konnnro.backend.server.auth;
+package org.myapp.backend.auth;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import konnnro.backend.server.error.ErrorResponse;
-import konnnro.backend.server.users.LoginCredentials;
-import konnnro.backend.server.users.User;
-import konnnro.backend.server.users.UserService;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.myapp.backend.error.ErrorResponse;
+import org.myapp.backend.users.LoginCredentials;
+import org.myapp.backend.users.User;
+import org.myapp.backend.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

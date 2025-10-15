@@ -1,4 +1,4 @@
-package konnnro.backend.server.config;
+package org.myapp.backend.config;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

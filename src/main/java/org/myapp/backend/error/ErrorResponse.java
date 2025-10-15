@@ -1,4 +1,4 @@
-package konnnro.backend.server.error;
+package org.myapp.backend.error;
 
 import java.util.HashMap;
 import java.util.Map;

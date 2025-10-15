@@ -2,10 +2,10 @@
 
 spring:
   profiles:
-    active: konnnro
+    active: myapp
 
   application:
-    name: server
+    name: myapp
 
   datasource:
     url: ${SPRING_DATASOURCE_URL}
@@ -23,4 +23,4 @@ app:
   expiration: 86400000
 
 server:
-  port: 7700
+  port: 4000

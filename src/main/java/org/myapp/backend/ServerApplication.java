@@ -1,4 +1,4 @@
-package konnnro.backend.server;
+package org.myapp.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

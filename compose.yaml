@@ -25,31 +25,31 @@ services:
       start_period: 30s
       retries: 3
 
-  db-manager:
-    image: dpage/pgadmin4:9.8.0
-    restart: always
-    ports:
-      - name: db-manager
-        host_ip: 127.0.0.1
-        published: 4444
-        target: 80
-    networks:
-      - app-network
-    volumes:
-      - db-manager_data:/var/lib/pgadmin
-    env_file:
-      - .env.db-manager
-    healthcheck:
-      test: ["CMD", "wget", "-O", "-", "http://127.0.0.1:80/misc/ping"]
-      interval: 10s
-      timeout: 10s
-      start_period: 30s
-      retries: 3
-    depends_on:
-      db:
-        condition: service_healthy
+  # db-manager:
+  #   image: dpage/pgadmin4:9.8.0
+  #   restart: always
+  #   ports:
+  #     - name: db-manager
+  #       host_ip: 127.0.0.1
+  #       published: 4444
+  #       target: 80
+  #   networks:
+  #     - app-network
+  #   volumes:
+  #     - db-manager_data:/var/lib/pgadmin
+  #   env_file:
+  #     - .env.db-manager
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-O", "-", "http://127.0.0.1:80/misc/ping"]
+  #     interval: 10s
+  #     timeout: 10s
+  #     start_period: 30s
+  #     retries: 3
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
 
-  server:
+  backend:
     image: ${APP_NAME}/spring:latest
     build:
       context: ./
@@ -61,14 +61,14 @@ services:
     # ports:
     #   - name: server
     #     host_ip: 127.0.0.1
-    #     published: 7700
-    #     target: 7700
+    #     published: 4000
+    #     target: 4000
     networks:
       - app-network
     env_file:
       - .env.server
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:7700/health"]
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:4000/health"]
       interval: 10s
       timeout: 10s
       start_period: 30s
